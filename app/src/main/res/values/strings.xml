@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PrimeNumbers</string>
+    <string name="recycleView_ThreadNumber">Thread number: %1$d</string>
+    <string name="recycleView_primeNumber">Prime number generated: %1$d</string>
+
+
+</resources>

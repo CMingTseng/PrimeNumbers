@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorActivityMainBackground">#000000</color>
+    <color name="colorRecycleViewText">#FFFFFF</color>
+    <color name="colorRecycleViewHeaderBackground">#474747</color>
+    <color name="colorRecycleViewRowBackground">#323232</color>
+</resources>

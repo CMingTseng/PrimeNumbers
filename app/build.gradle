@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "info.dvkr.primenumbers"
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
+        versionCode project.ext.androidVersionCode
+        versionName project.ext.androidVersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile project(':domain')
+    compile project(':data')
+
+    compile "com.android.support:appcompat-v7:" + project.ext.supportLibVersion
+    compile "com.android.support:recyclerview-v7:" + project.ext.supportLibVersion
+    compile "com.android.support.constraint:constraint-layout:" + project.ext.constraintLibVersion
+    compile "com.google.dagger:dagger-android:" + project.ext.daggerLibVersion
+    annotationProcessor "com.google.dagger:dagger-compiler:" + project.ext.daggerLibVersion
+
+}

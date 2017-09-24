@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorRecycleViewRowBackground"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView_primeNumber_thread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_round_end"
+            android:paddingBottom="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorRecycleViewText"
+            tools:text="Thread number: 1"/>
+
+        <TextView
+            android:id="@+id/textView_primeNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorRecycleViewText"
+            tools:text="Prime number generated: 2"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"/>
+</LinearLayout>
