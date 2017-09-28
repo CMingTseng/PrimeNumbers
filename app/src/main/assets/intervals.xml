@@ -1,34 +1,34 @@
 <root>
     <intervals>
         <interval>
-        <id>1</id>
-        <low>100</low>
-        <high>200</high>
+            <id>1</id>
+            <low>100</low>
+            <high>200</high>
+        </interval>
         <interval>
+            <id>2</id>
+            <low>500</low>
+            <high>888</high>
+        </interval>
         <interval>
-        <id>2</id>
-        <low>500</low>
-        <high>888</high>
+            <id>3</id>
+            <low>300</low>
+            <high>455</high>
+        </interval>
         <interval>
+            <id>4</id>
+            <low>50</low>
+            <high>90</high>
+        </interval>
         <interval>
-        <id>3</id>
-        <low>300</low>
-        <high>455</high>
+            <id>5</id>
+            <low>777</low>
+            <high>999</high>
+        </interval>
         <interval>
-        <interval>
-        <id>4</id>
-        <low>50</low>
-        <high>90</high>
-        <interval>
-        <interval>
-        <id>5</id>
-        <low>777</low>
-        <high>999</high>
-        <interval>
-        <interval>
-        <id>6</id>
-        <low>456</low>
-        <high>654</high>
-        <interval>
+            <id>6</id>
+            <low>456</low>
+            <high>654</high>
+        </interval>
     </intervals>
 </root>

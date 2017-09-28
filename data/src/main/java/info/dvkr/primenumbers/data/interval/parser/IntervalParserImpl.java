@@ -17,14 +17,39 @@ import info.dvkr.primenumbers.domain.model.Interval;
 
 @Singleton
 public class IntervalParserImpl implements IntervalParser {
-    private final static String ROOT = "ROOT";
-    private final static String INTERVALS = "INTERVALS";
     private final static String INTERVAL = "INTERVAL";
     private final static String ID = "ID";
     private final static String LOW = "LOW";
     private final static String HIGH = "HIGH";
 
     private final ExecutorService executor;
+
+    public static class Item {
+        private final List<Item> downItemList = new ArrayList<>();
+        private final String tag;
+        private final String content;
+
+        public Item(final String tag, final String content) {
+            this.tag = tag;
+            this.content = content;
+        }
+
+        public void addAll(final List<Item> items) {
+            downItemList.addAll(items);
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public List<Item> getDownItemList() {
+            return downItemList;
+        }
+    }
 
     @Inject
     public IntervalParserImpl(final ExecutorService executor) {
@@ -36,44 +61,7 @@ public class IntervalParserImpl implements IntervalParser {
         final Future<List<Interval>> listFuture = executor.submit(new Callable<List<Interval>>() {
             @Override
             public List<Interval> call() throws Exception {
-                final List<Interval> intervalList = new ArrayList<>();
-
-                String root = data.trim().toUpperCase();
-                root = root.substring(root.indexOf(getStartTag(ROOT)) + getStartTag(ROOT).length(), root.indexOf(getEndTag(ROOT)));
-                String intervals = root.substring(root.indexOf(getStartTag(INTERVALS)) + getStartTag(INTERVALS).length(), root.indexOf(getEndTag(INTERVALS)));
-
-                final String startTagInterval = getStartTag(INTERVAL);
-                final String startTagId = getStartTag(ID);
-                final String endTagId = getEndTag(ID);
-                final String startTagLow = getStartTag(LOW);
-                final String endTagLow = getEndTag(LOW);
-                final String startTagHigh = getStartTag(HIGH);
-                final String endTagHigh = getEndTag(HIGH);
-
-                int startIndex;
-                int endIndex;
-                String id;
-                String low;
-                String high;
-
-                while (!intervals.isEmpty()) {
-                    startIndex = intervals.indexOf(startTagInterval) + startTagInterval.length();
-                    endIndex = intervals.indexOf(startTagInterval, startIndex);
-
-                    String interval = intervals.substring(startIndex, endIndex).trim();
-
-                    // Parsing interval
-                    id = interval.substring(interval.indexOf(startTagId) + startTagId.length(), interval.indexOf(endTagId)).trim();
-                    low = interval.substring(interval.indexOf(startTagLow) + startTagLow.length(), interval.indexOf(endTagLow)).trim();
-                    high = interval.substring(interval.indexOf(startTagHigh) + startTagHigh.length(), interval.indexOf(endTagHigh)).trim();
-
-                    intervalList.add(new Interval(Integer.valueOf(id), Integer.valueOf(low), Integer.valueOf(high)));
-
-                    // Removing current interval
-                    intervals = intervals.substring(endIndex + startTagInterval.length(), intervals.length()).trim();
-                }
-
-                return intervalList;
+                return collectIntervals(getItems(data.trim().toUpperCase()));
             }
         });
 
@@ -84,11 +72,62 @@ public class IntervalParserImpl implements IntervalParser {
         }
     }
 
-    private String getStartTag(String s) {
-        return "<" + s + ">";
+    // Return tree on Items that represent XML tree
+    private List<Item> getItems(final String source) {
+        final List<Item> items = new ArrayList<>();
+        String workingSource = source.trim();
+        while (!workingSource.isEmpty()) {
+            final int startTagIndex = workingSource.indexOf('<');
+
+            //No tag, end of recursion
+            if (startTagIndex < 0) return null;
+
+            final String tag = workingSource.substring(startTagIndex + 1, workingSource.indexOf('>'));
+            final int closeTagIndex = workingSource.indexOf("</" + tag + '>');
+            final String tagContent = workingSource.substring(startTagIndex + tag.length() + 2, closeTagIndex);
+
+            final Item item = new Item(tag, tagContent);
+            final List<Item> childItemList = getItems(tagContent);
+            if (childItemList != null) item.addAll(childItemList);
+            items.add(item);
+
+            workingSource = workingSource.substring(closeTagIndex + tag.length() + 3);
+        }
+        return items;
     }
 
-    private String getEndTag(String s) {
-        return "</" + s + ">";
+    // Return lis of intervals
+    private List<Interval> collectIntervals(final List<Item> items) {
+        final List<Interval> intervalList = new ArrayList<>();
+
+        for (final Item item : items) {
+            if (INTERVAL.equals(item.getTag())) { // Interval
+                final Interval interval = getInterval(item.downItemList);
+                if (interval != null) intervalList.add(interval);
+            } else { // Going deeper
+                intervalList.addAll(collectIntervals(item.getDownItemList()));
+            }
+        }
+
+        return intervalList;
+    }
+
+    // Returns interval or null if error
+    private Interval getInterval(final List<Item> items) {
+        if (items.size() != 3) return null;
+
+        int id = -1;
+        int low = -1;
+        int high = -1;
+
+        for (final Item item : items) {
+            if (ID.equals(item.getTag())) id = Integer.parseInt(item.content);
+            if (LOW.equals(item.getTag())) low = Integer.parseInt(item.content);
+            if (HIGH.equals(item.getTag())) high = Integer.parseInt(item.content);
+        }
+
+        if (id < 0 || low < 0 || high < 0) return null;
+
+        return new Interval(id, low, high);
     }
 }
